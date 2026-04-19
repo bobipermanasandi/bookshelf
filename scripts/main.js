@@ -1,12 +1,7 @@
-// Bookshelf App Logic
-
-// Storage Key
 const STORAGE_KEY = 'BOOKSHELF_APP_DATA';
 
-// State
 let books = [];
 
-// DOM Elements
 const bookForm = document.getElementById('bookForm');
 const bookFormTitle = document.getElementById('bookFormTitle');
 const bookFormAuthor = document.getElementById('bookFormAuthor');
@@ -20,7 +15,6 @@ const searchBookTitle = document.getElementById('searchBookTitle');
 const incompleteBookList = document.getElementById('incompleteBookList');
 const completeBookList = document.getElementById('completeBookList');
 
-// Helper: Load data from localStorage
 function loadData() {
   const data = localStorage.getItem(STORAGE_KEY);
   if (data) {
@@ -28,12 +22,9 @@ function loadData() {
   }
 }
 
-// Helper: Save data to localStorage
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
 }
-
-// Helper: Create book element using the required template
 function createBookElement(book) {
   const container = document.createElement('div');
   container.setAttribute('data-bookid', book.id);
@@ -67,7 +58,6 @@ function createBookElement(book) {
   deleteBtn.innerText = 'Hapus buku';
   deleteBtn.addEventListener('click', () => deleteBook(book.id));
 
-  // Optional: Edit button (as requested in instruksi.md)
   const editBtn = document.createElement('button');
   editBtn.setAttribute('data-testid', 'bookItemEditButton');
   editBtn.classList.add('orange');
@@ -86,7 +76,6 @@ function createBookElement(book) {
   return container;
 }
 
-// Logic: Render all books
 function renderBooks(filterText = '') {
   incompleteBookList.innerHTML = '';
   completeBookList.innerHTML = '';
@@ -105,12 +94,11 @@ function renderBooks(filterText = '') {
   }
 }
 
-// Logic: Add new book
 function addBook(event) {
   event.preventDefault();
 
   const newBook = {
-    id: +new Date(), // Number timestamp
+    id: +new Date(),
     title: bookFormTitle.value,
     author: bookFormAuthor.value,
     year: Number(bookFormYear.value),
@@ -124,7 +112,6 @@ function addBook(event) {
   updateSubmitButtonText();
 }
 
-// Logic: Toggle book status
 function toggleBookStatus(bookId) {
   const bookIndex = books.findIndex(b => b.id === bookId);
   if (bookIndex !== -1) {
@@ -134,20 +121,16 @@ function toggleBookStatus(bookId) {
   }
 }
 
-// Logic: Delete book
 function deleteBook(bookId) {
   books = books.filter(b => b.id !== bookId);
   saveData();
   renderBooks();
 }
 
-// Logic: Search book
 function searchBook(event) {
   event.preventDefault();
   renderBooks(searchBookTitle.value);
 }
-
-// Logic: Update submit button text based on checkbox
 function updateSubmitButtonText() {
   if (bookFormIsComplete.checked) {
     bookFormSubmitText.innerText = 'Selesai dibaca';
@@ -156,7 +139,6 @@ function updateSubmitButtonText() {
   }
 }
 
-// Logic: Edit book
 function editBook(bookId) {
   const book = books.find(b => b.id === bookId);
   if (book) {
@@ -166,17 +148,12 @@ function editBook(bookId) {
     bookFormIsComplete.checked = book.isComplete;
     updateSubmitButtonText();
     
-    // Smooth scroll to form
     bookForm.scrollIntoView({ behavior: 'smooth' });
     
-    // Change submit behavior temporarily or just update existing one
-    // For simplicity, we remove the old one and add a temp update logic or just let user add as new and delete old
-    // Better way: remove old book when editing starts if we want a true "edit"
     deleteBook(bookId);
   }
 }
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   loadData();
   renderBooks();
